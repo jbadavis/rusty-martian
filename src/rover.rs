@@ -3,8 +3,7 @@ pub struct Position (pub i32, pub i32, pub char);
 
 pub struct Rover {
     pub position: Position,
-    pub instructions: Vec<char>,
-    pub move_number: usize,
+    pub next_position: Position,
 }
 
 pub enum Direction {
@@ -13,11 +12,10 @@ pub enum Direction {
 }
 
 impl Rover {
-    pub fn new(position: Position, instructions: Vec<char>) -> Rover {
+    pub fn new(position: Position) -> Rover {
         Rover {
+            next_position: Position(0, 0, 'N'),
             position,
-            instructions,
-            move_number: 0,
         }
     }
 
@@ -54,17 +52,19 @@ impl Rover {
         position
     }
 
-    pub fn follow_instruction(&mut self) -> Position {
-        println!("Follow {:?}", self.position);
+    pub fn accept_move(&mut self) {
+        self.position = self.next_position;
+    }
 
-        let position = match self.instructions[self.move_number] {
+    pub fn follow_instruction(&mut self, instruction: &char) -> Position {
+        let position = match instruction {
             'L' => self.rotate(Direction::Left),
             'R' => self.rotate(Direction::Right),
             'F' => self.move_forward(),
             _ => self.position,
         };
 
-        self.move_number += 1;
+        self.next_position = position;
 
         position
     }
