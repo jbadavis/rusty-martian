@@ -1,9 +1,12 @@
 #[derive(Debug, Copy, Clone)]
+#[derive(PartialEq, PartialOrd)]
 pub struct Position (pub i32, pub i32, pub char);
 
+#[derive(Debug)]
 pub struct Rover {
     pub position: Position,
     pub next_position: Position,
+    pub lost: bool,
 }
 
 pub enum Direction {
@@ -14,6 +17,7 @@ pub enum Direction {
 impl Rover {
     pub fn new(position: Position) -> Rover {
         Rover {
+            lost: false,
             next_position: Position(0, 0, 'N'),
             position,
         }
@@ -52,7 +56,7 @@ impl Rover {
         position
     }
 
-    pub fn accept_move(&mut self) {
+    pub fn accept_instruction(&mut self) {
         self.position = self.next_position;
     }
 
