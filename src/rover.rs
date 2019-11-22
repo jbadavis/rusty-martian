@@ -1,5 +1,4 @@
-#[derive(Debug, Copy, Clone)]
-#[derive(PartialEq, PartialOrd)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct Position (pub i32, pub i32, pub char);
 
 #[derive(Debug)]
