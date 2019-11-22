@@ -79,6 +79,10 @@ impl Rover {
         position
     }
 
+    pub fn is_lost(&mut self) {
+        self.lost = true;
+    }
+
     pub fn accept_instruction(&mut self) {
         self.position = self.next_position;
     }
@@ -169,6 +173,16 @@ mod tests {
             ]
         );
     }
+
+    #[test]
+    fn rover_is_lost() {
+        let mut rover = Rover::new(Position(2, 2, 'N'));
+
+        rover.is_lost();
+
+        assert_eq!(rover.lost, true);
+    }
+
 
     #[test]
     fn position_accepted() {

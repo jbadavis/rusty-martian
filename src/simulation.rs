@@ -1,5 +1,4 @@
-use crate::rover::Position;
-use crate::rover::Rover;
+use crate::rover::{Position, Rover};
 
 pub struct Simulation {
     pub grid: (i32, i32),
@@ -39,6 +38,7 @@ impl Simulation {
 
                 if self.off_grid(&new_position) && !moves_to_scent {
                     self.add_scent(new_position);
+                    self.rovers[i].is_lost();
 
                     break;
                 } else if moves_to_scent {
@@ -51,8 +51,7 @@ impl Simulation {
     }
 }
 
-#[cfg(test)]
-mod tests {
+#[cfg(test)] mod tests {
     use super::*;
 
     #[test]
@@ -76,17 +75,17 @@ mod tests {
 
         simulation.run();
 
-        let result_positions: Vec<Position> = simulation
+        let result_positions: Vec<(Position, bool)> = simulation
             .rovers
             .iter()
-            .map(|rover| rover.position)
+            .map(|rover| (rover.position, rover.lost))
             .collect();
 
         assert_eq!(
             vec![
-                Position(1, 1, 'E'),
-                Position(3, 3, 'N'),
-                Position(2, 3, 'S')
+                (Position(1, 1, 'E'), false),
+                (Position(3, 3, 'N'), true),
+                (Position(2, 3, 'S'), false),
             ],
             result_positions
         );

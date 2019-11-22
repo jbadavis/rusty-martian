@@ -1,9 +1,8 @@
 mod rover;
 mod simulation;
 
-use rover::Position;
-use rover::Rover;
-use simulation::Simulation;
+use crate::rover::{Position, Rover};
+use crate::simulation::Simulation;
 
 fn main() {
     let grid = (5, 3);
@@ -13,7 +12,9 @@ fn main() {
     let rover_three = Rover::new(Position(0, 3, 'W'));
 
     let instructions_one = vec!['R', 'F', 'R', 'F', 'R', 'F', 'R', 'F'];
-    let instructions_two = vec!['F', 'R', 'R', 'F', 'L', 'L', 'F', 'F', 'R', 'R', 'F', 'L', 'L'];
+    let instructions_two = vec![
+        'F', 'R', 'R', 'F', 'L', 'L', 'F', 'F', 'R', 'R', 'F', 'L', 'L',
+    ];
     let instructions_three = vec!['L', 'L', 'F', 'F', 'F', 'L', 'F', 'L', 'F', 'L'];
 
     let rovers = vec![rover_one, rover_two, rover_three];
@@ -22,4 +23,14 @@ fn main() {
     let mut simulation = Simulation::new(grid, rovers, instructions);
 
     simulation.run();
+
+    for rover in simulation.rovers.iter() {
+        let Position(x, y, orientation) = rover.position;
+
+        if rover.lost {
+            println!("{} {} {} LOST", x, y, orientation);
+        } else {
+            println!("{} {} {}", x, y, orientation);
+        }
+    }
 }
