@@ -1,14 +1,16 @@
 use crate::rover::{Position, Rover};
 
+pub struct Grid(pub i32, pub i32);
+
 pub struct Simulation {
-    pub grid: (i32, i32),
+    pub grid: Grid,
     pub rovers: Vec<Rover>,
     pub instructions: Vec<Vec<char>>,
     pub scents: Vec<Position>,
 }
 
 impl Simulation {
-    pub fn new(grid: (i32, i32), rovers: Vec<Rover>, instructions: Vec<Vec<char>>) -> Simulation {
+    pub fn new(grid: Grid, rovers: Vec<Rover>, instructions: Vec<Vec<char>>) -> Simulation {
         Simulation {
             grid,
             rovers,
@@ -56,7 +58,7 @@ impl Simulation {
 
     #[test]
     fn check_simulation() {
-        let grid = (5, 3);
+        let grid = Grid(5, 3);
 
         let rover_one = Rover::new(Position(1, 1, 'E'));
         let rover_two = Rover::new(Position(3, 2, 'N'));
