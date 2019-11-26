@@ -1,9 +1,34 @@
-use std::fs;
+use std::fs::File;
+use std::io::Read;
 
 use crate::rover::{Position, Rover};
 use crate::simulation::Grid;
 
 const RADIX: u32 = 10;
+
+pub fn read_input() -> (Grid, Vec<Rover>, Vec<Vec<char>>) {
+    let data = match open_file() {
+        Err(error) => panic!("Couldn't read file: {:?}", error),
+        Ok(contents) => contents,
+    };
+
+    let data: Vec<&str> = data.split('\n').filter(|line| !line.is_empty()).collect();
+
+    (
+        get_grid(data[0]),
+        get_rovers(&data),
+        get_instructions(&data),
+    )
+}
+
+fn open_file() -> std::io::Result<String> {
+    let mut f = File::open("data.txt")?;
+    let mut contents = String::new();
+
+    f.read_to_string(&mut contents)?;
+
+    Ok(contents)
+}
 
 fn char_to_int(c: char) -> i32 {
     c.to_digit(RADIX).unwrap() as i32
@@ -44,15 +69,4 @@ pub fn get_instructions(data: &Vec<&str>) -> Vec<Vec<char>> {
     }
 
     instructions
-}
-
-pub fn read_input() -> (Grid, Vec<Rover>, Vec<Vec<char>>) {
-    let data = fs::read_to_string("data.txt").expect("Unable to read file");
-    let data: Vec<&str> = data.split('\n').filter(|line| !line.is_empty()).collect();
-
-    let grid = get_grid(data[0]);
-    let instructions = get_instructions(&data);
-    let rovers = get_rovers(&data);
-
-    (grid, rovers, instructions)
 }
