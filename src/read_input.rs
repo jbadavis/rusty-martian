@@ -34,6 +34,10 @@ fn char_to_int(c: char) -> i32 {
     c.to_digit(RADIX).unwrap() as i32
 }
 
+fn parse_line(line: &str) -> Vec<char> {
+    line.chars().filter(|c| !c.is_whitespace()).collect()
+}
+
 fn get_grid(line: &str) -> Grid {
     let grid: Vec<i32> = line
         .chars()
@@ -44,28 +48,26 @@ fn get_grid(line: &str) -> Grid {
     Grid(grid[0], grid[1])
 }
 
-pub fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
+fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
     let mut rovers: Vec<Rover> = vec![];
 
     for line in (1..data.len()).step_by(2) {
-        let rover_line: Vec<char> = data[line].chars().filter(|c| c.clone() != ' ').collect();
+        let parsed_line = parse_line(data[line]);
 
-        let x = char_to_int(rover_line[0]);
-        let y = char_to_int(rover_line[1]);
+        let x = char_to_int(parsed_line[0]);
+        let y = char_to_int(parsed_line[1]);
 
-        rovers.push(Rover::new(Position(x, y, rover_line[2])));
+        rovers.push(Rover::new(Position(x, y, parsed_line[2])));
     }
 
     rovers
 }
 
-pub fn get_instructions(data: &Vec<&str>) -> Vec<Vec<char>> {
+fn get_instructions(data: &Vec<&str>) -> Vec<Vec<char>> {
     let mut instructions: Vec<Vec<char>> = vec![];
 
     for line in (2..data.len()).step_by(2) {
-        let instruction_set: Vec<char> = data[line].chars().filter(|c| c.clone() != ' ').collect();
-
-        instructions.push(instruction_set);
+        instructions.push(parse_line(data[line]));
     }
 
     instructions
