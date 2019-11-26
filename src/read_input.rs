@@ -76,9 +76,7 @@ fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
         let x = char_to_int(parsed_line[0]);
         let y = char_to_int(parsed_line[1]);
 
-        let orientation = parse_orientation(parsed_line[2]).unwrap_or_else(|err| {
-            panic!("Error: {}", err);
-        });
+        let orientation = parse_orientation(parsed_line[2]).expect("get_rovers");
 
         rovers.push(Rover::new(Position(x, y, orientation)));
     }
@@ -95,9 +93,7 @@ fn get_instructions(data: &Vec<&str>) -> Vec<Vec<Instruction>> {
         let mut parsed_instructions: Vec<Instruction> = vec![];
 
         for c in parsed_line {
-            let instruction = parse_instruction(c).unwrap_or_else(|err| {
-                panic!("Error: {}", err);
-            });
+            let instruction = parse_instruction(c).expect("get_rovers");
 
             parsed_instructions.push(instruction);
         }

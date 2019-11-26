@@ -83,6 +83,7 @@ mod tests {
             Instruction::Right,
             Instruction::Forward,
         ];
+
         let instructions_two = vec![
             Instruction::Forward,
             Instruction::Right,
@@ -98,6 +99,7 @@ mod tests {
             Instruction::Left,
             Instruction::Left,
         ];
+
         let instructions_three = vec![
             Instruction::Left,
             Instruction::Left,
