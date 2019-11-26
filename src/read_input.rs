@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::Read;
 
-use crate::rover::{Position, Rover, Orientation};
+use crate::rover::{Orientation, Position, Rover};
 use crate::simulation::{Grid, Instruction};
 
 const RADIX: u32 = 10;
@@ -38,6 +38,25 @@ fn parse_line(line: &str) -> Vec<char> {
     line.chars().filter(|c| !c.is_whitespace()).collect()
 }
 
+fn parse_orientation(orientation: char) -> Result<Orientation, String> {
+    match orientation {
+        'E' => Ok(Orientation::East),
+        'N' => Ok(Orientation::North),
+        'S' => Ok(Orientation::South),
+        'W' => Ok(Orientation::West),
+        _ => Err(String::from("unknown rover orientation")),
+    }
+}
+
+fn parse_instruction(instruction: char) -> Result<Instruction, String> {
+    match instruction {
+        'L' => Ok(Instruction::Left),
+        'R' => Ok(Instruction::Right),
+        'F' => Ok(Instruction::Forward),
+        _ => Err(String::from("unknown instruction")),
+    }
+}
+
 fn get_grid(line: &str) -> Grid {
     let grid: Vec<i32> = line
         .chars()
@@ -57,13 +76,9 @@ fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
         let x = char_to_int(parsed_line[0]);
         let y = char_to_int(parsed_line[1]);
 
-        let orientation = match parsed_line[2] {
-            'E' => Orientation::East,
-            'N' => Orientation::North,
-            'S' => Orientation::South,
-            'W' => Orientation::West,
-            _ => panic!("Unknown rover orientation"),
-        };
+        let orientation = parse_orientation(parsed_line[2]).unwrap_or_else(|err| {
+            panic!("Error: {}", err);
+        });
 
         rovers.push(Rover::new(Position(x, y, orientation)));
     }
@@ -80,12 +95,9 @@ fn get_instructions(data: &Vec<&str>) -> Vec<Vec<Instruction>> {
         let mut parsed_instructions: Vec<Instruction> = vec![];
 
         for c in parsed_line {
-            let instruction = match c {
-                'L' => Instruction::Left,
-                'R' => Instruction::Right,
-                'F' => Instruction::Forward,
-                _ => panic!("Unknown instruction"),
-            };
+            let instruction = parse_instruction(c).unwrap_or_else(|err| {
+                panic!("Error: {}", err);
+            });
 
             parsed_instructions.push(instruction);
         }
