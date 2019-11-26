@@ -1,12 +1,12 @@
 use std::fs::File;
 use std::io::Read;
 
-use crate::rover::{Position, Rover};
-use crate::simulation::Grid;
+use crate::rover::{Position, Rover, Orientation};
+use crate::simulation::{Grid, Instruction};
 
 const RADIX: u32 = 10;
 
-pub fn read_input() -> (Grid, Vec<Rover>, Vec<Vec<char>>) {
+pub fn read_input() -> (Grid, Vec<Rover>, Vec<Vec<Instruction>>) {
     let data = match open_file() {
         Err(error) => panic!("Couldn't read file: {:?}", error),
         Ok(contents) => contents,
@@ -57,17 +57,40 @@ fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
         let x = char_to_int(parsed_line[0]);
         let y = char_to_int(parsed_line[1]);
 
-        rovers.push(Rover::new(Position(x, y, parsed_line[2])));
+        let orientation = match parsed_line[2] {
+            'E' => Orientation::East,
+            'N' => Orientation::North,
+            'S' => Orientation::South,
+            'W' => Orientation::West,
+            _ => panic!("Unknown rover orientation"),
+        };
+
+        rovers.push(Rover::new(Position(x, y, orientation)));
     }
 
     rovers
 }
 
-fn get_instructions(data: &Vec<&str>) -> Vec<Vec<char>> {
-    let mut instructions: Vec<Vec<char>> = vec![];
+fn get_instructions(data: &Vec<&str>) -> Vec<Vec<Instruction>> {
+    let mut instructions: Vec<Vec<Instruction>> = vec![];
 
     for line in (2..data.len()).step_by(2) {
-        instructions.push(parse_line(data[line]));
+        let parsed_line = parse_line(data[line]);
+
+        let mut parsed_instructions: Vec<Instruction> = vec![];
+
+        for c in parsed_line {
+            let instruction = match c {
+                'L' => Instruction::Left,
+                'R' => Instruction::Right,
+                'F' => Instruction::Forward,
+                _ => panic!("Unknown instruction"),
+            };
+
+            parsed_instructions.push(instruction);
+        }
+
+        instructions.push(parsed_instructions);
     }
 
     instructions

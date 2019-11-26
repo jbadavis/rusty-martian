@@ -1,16 +1,23 @@
 use crate::rover::{Position, Rover};
 
+#[derive(Debug)]
+pub enum Instruction {
+    Left,
+    Right,
+    Forward,
+}
+
 pub struct Grid(pub i32, pub i32);
 
 pub struct Simulation {
     pub grid: Grid,
     pub rovers: Vec<Rover>,
-    pub instructions: Vec<Vec<char>>,
+    pub instructions: Vec<Vec<Instruction>>,
     pub scents: Vec<Position>,
 }
 
 impl Simulation {
-    pub fn new(grid: Grid, rovers: Vec<Rover>, instructions: Vec<Vec<char>>) -> Simulation {
+    pub fn new(grid: Grid, rovers: Vec<Rover>, instructions: Vec<Vec<Instruction>>) -> Simulation {
         Simulation {
             grid,
             rovers,
@@ -55,20 +62,21 @@ impl Simulation {
 
 #[cfg(test)] mod tests {
     use super::*;
+    use crate::rover::Orientation;
 
     #[test]
     fn check_simulation() {
         let grid = Grid(5, 3);
 
-        let rover_one = Rover::new(Position(1, 1, 'E'));
-        let rover_two = Rover::new(Position(3, 2, 'N'));
-        let rover_three = Rover::new(Position(0, 3, 'W'));
+        let rover_one = Rover::new(Position(1, 1, Orientation::East));
+        let rover_two = Rover::new(Position(3, 2, Orientation::North));
+        let rover_three = Rover::new(Position(0, 3, Orientation::West));
 
-        let instructions_one = vec!['R', 'F', 'R', 'F', 'R', 'F', 'R', 'F'];
+        let instructions_one = vec![Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward];
         let instructions_two = vec![
-            'F', 'R', 'R', 'F', 'L', 'L', 'F', 'F', 'R', 'R', 'F', 'L', 'L',
+            Instruction::Forward, Instruction::Right, Instruction::Right, Instruction::Forward, Instruction::Left, Instruction::Left, Instruction::Forward, Instruction::Forward, Instruction::Right, Instruction::Right, Instruction::Forward, Instruction::Left, Instruction::Left,
         ];
-        let instructions_three = vec!['L', 'L', 'F', 'F', 'F', 'L', 'F', 'L', 'F', 'L'];
+        let instructions_three = vec![Instruction::Left, Instruction::Left, Instruction::Forward, Instruction::Forward, Instruction::Forward, Instruction::Left, Instruction::Forward, Instruction::Left, Instruction::Forward, Instruction::Left];
 
         let rovers = vec![rover_one, rover_two, rover_three];
         let instructions = vec![instructions_one, instructions_two, instructions_three];
@@ -85,9 +93,9 @@ impl Simulation {
 
         assert_eq!(
             vec![
-                (Position(1, 1, 'E'), false),
-                (Position(3, 3, 'N'), true),
-                (Position(2, 3, 'S'), false),
+                (Position(1, 1, Orientation::East), false),
+                (Position(3, 3, Orientation::North), true),
+                (Position(2, 3, Orientation::South), false),
             ],
             result_positions
         );

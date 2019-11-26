@@ -1,5 +1,20 @@
+use crate::simulation::Instruction;
+
+pub enum Direction {
+    Left,
+    Right,
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub struct Position(pub i32, pub i32, pub char);
+pub enum Orientation {
+    East,
+    North,
+    South,
+    West,
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+pub struct Position(pub i32, pub i32, pub Orientation);
 
 #[derive(Debug)]
 pub struct Rover {
@@ -8,16 +23,11 @@ pub struct Rover {
     pub lost: bool,
 }
 
-pub enum Direction {
-    Left,
-    Right,
-}
-
 impl Rover {
     pub fn new(position: Position) -> Rover {
         Rover {
             lost: false,
-            next_position: Position(0, 0, 'N'),
+            next_position: Position(0, 0, Orientation::North),
             position,
         }
     }
@@ -25,41 +35,15 @@ impl Rover {
     pub fn rotate(&mut self, direction: Direction) -> Position {
         let Position(x, y, orientation) = self.position;
 
-        let rotate_left = match direction {
-            Direction::Left => true,
-            Direction::Right => false,
-        };
-
-        let orientation = match orientation {
-            'N' => {
-                if rotate_left {
-                    'W'
-                } else {
-                    'E'
-                }
-            }
-            'E' => {
-                if rotate_left {
-                    'N'
-                } else {
-                    'S'
-                }
-            }
-            'S' => {
-                if rotate_left {
-                    'E'
-                } else {
-                    'W'
-                }
-            }
-            'W' => {
-                if rotate_left {
-                    'S'
-                } else {
-                    'N'
-                }
-            }
-            _ => orientation,
+        let orientation = match (orientation, direction) {
+            (Orientation::North, Direction::Left) => Orientation::West,
+            (Orientation::North, Direction::Right) => Orientation::East,
+            (Orientation::East, Direction::Left) => Orientation::North,
+            (Orientation::East, Direction::Right) => Orientation::South,
+            (Orientation::South, Direction::Left) => Orientation::East,
+            (Orientation::South, Direction::Right) => Orientation::West,
+            (Orientation::West, Direction::Left) => Orientation::South,
+            (Orientation::West, Direction::Right) => Orientation::North,
         };
 
         Position(x, y, orientation)
@@ -69,11 +53,10 @@ impl Rover {
         let Position(x, y, orientation) = self.position;
 
         let position = match self.position.2 {
-            'N' => Position(x, y + 1, orientation),
-            'E' => Position(x + 1, y, orientation),
-            'S' => Position(x, y - 1, orientation),
-            'W' => Position(x - 1, y, orientation),
-            _ => self.position,
+            Orientation::North => Position(x, y + 1, orientation),
+            Orientation::East => Position(x + 1, y, orientation),
+            Orientation::South => Position(x, y - 1, orientation),
+            Orientation::West => Position(x - 1, y, orientation),
         };
 
         position
@@ -87,12 +70,11 @@ impl Rover {
         self.position = self.next_position;
     }
 
-    pub fn follow_instruction(&mut self, instruction: &char) -> Position {
+    pub fn follow_instruction(&mut self, instruction: &Instruction) -> Position {
         let position = match instruction {
-            'L' => self.rotate(Direction::Left),
-            'R' => self.rotate(Direction::Right),
-            'F' => self.move_forward(),
-            _ => self.position,
+            Instruction::Left => self.rotate(Direction::Left),
+            Instruction::Right => self.rotate(Direction::Right),
+            Instruction::Forward => self.move_forward(),
         };
 
         self.next_position = position;
@@ -107,17 +89,17 @@ mod tests {
 
     #[test]
     fn rotate_when_left() {
-        let mut rover_north = Rover::new(Position(2, 2, 'N'));
-        let mut rover_east = Rover::new(Position(2, 2, 'E'));
-        let mut rover_south = Rover::new(Position(2, 2, 'S'));
-        let mut rover_west = Rover::new(Position(2, 2, 'W'));
+        let mut rover_north = Rover::new(Position(2, 2, Orientation::North));
+        let mut rover_east = Rover::new(Position(2, 2, Orientation::East));
+        let mut rover_south = Rover::new(Position(2, 2, Orientation::South));
+        let mut rover_west = Rover::new(Position(2, 2, Orientation::West));
 
         assert_eq!(
             [
-                Position(2, 2, 'W'),
-                Position(2, 2, 'N'),
-                Position(2, 2, 'E'),
-                Position(2, 2, 'S')
+                Position(2, 2, Orientation::West),
+                Position(2, 2, Orientation::North),
+                Position(2, 2, Orientation::East),
+                Position(2, 2, Orientation::South)
             ],
             [
                 rover_north.rotate(Direction::Left),
@@ -130,17 +112,17 @@ mod tests {
 
     #[test]
     fn rotate_when_right() {
-        let mut rover_north = Rover::new(Position(2, 2, 'N'));
-        let mut rover_east = Rover::new(Position(2, 2, 'E'));
-        let mut rover_south = Rover::new(Position(2, 2, 'S'));
-        let mut rover_west = Rover::new(Position(2, 2, 'W'));
+        let mut rover_north = Rover::new(Position(2, 2, Orientation::North));
+        let mut rover_east = Rover::new(Position(2, 2, Orientation::East));
+        let mut rover_south = Rover::new(Position(2, 2, Orientation::South));
+        let mut rover_west = Rover::new(Position(2, 2, Orientation::West));
 
         assert_eq!(
             [
-                Position(2, 2, 'E'),
-                Position(2, 2, 'S'),
-                Position(2, 2, 'W'),
-                Position(2, 2, 'N')
+                Position(2, 2, Orientation::East),
+                Position(2, 2, Orientation::South),
+                Position(2, 2, Orientation::West),
+                Position(2, 2, Orientation::North)
             ],
             [
                 rover_north.rotate(Direction::Right),
@@ -153,17 +135,17 @@ mod tests {
 
     #[test]
     fn move_foward() {
-        let mut rover_north = Rover::new(Position(2, 2, 'N'));
-        let mut rover_east = Rover::new(Position(2, 2, 'E'));
-        let mut rover_south = Rover::new(Position(2, 2, 'S'));
-        let mut rover_west = Rover::new(Position(2, 2, 'W'));
+        let mut rover_north = Rover::new(Position(2, 2, Orientation::North));
+        let mut rover_east = Rover::new(Position(2, 2, Orientation::East));
+        let mut rover_south = Rover::new(Position(2, 2, Orientation::South));
+        let mut rover_west = Rover::new(Position(2, 2, Orientation::West));
 
         assert_eq!(
             [
-                Position(2, 3, 'N'),
-                Position(3, 2, 'E'),
-                Position(2, 1, 'S'),
-                Position(1, 2, 'W')
+                Position(2, 3, Orientation::North),
+                Position(3, 2, Orientation::East),
+                Position(2, 1, Orientation::South),
+                Position(1, 2, Orientation::West)
             ],
             [
                 rover_north.move_forward(),
@@ -176,7 +158,7 @@ mod tests {
 
     #[test]
     fn rover_is_lost() {
-        let mut rover = Rover::new(Position(2, 2, 'N'));
+        let mut rover = Rover::new(Position(2, 2, Orientation::North));
 
         rover.is_lost();
 
@@ -186,7 +168,7 @@ mod tests {
 
     #[test]
     fn position_accepted() {
-        let mut rover = Rover::new(Position(2, 2, 'N'));
+        let mut rover = Rover::new(Position(2, 2, Orientation::North));
 
         rover.move_forward();
         rover.accept_instruction();
@@ -196,10 +178,10 @@ mod tests {
 
     #[test]
     fn next_position_set() {
-        let mut rover = Rover::new(Position(1, 1, 'E'));
+        let mut rover = Rover::new(Position(1, 1, Orientation::East));
 
-        rover.follow_instruction(&'F');
+        rover.follow_instruction(&Instruction::Forward);
 
-        assert_eq!(Position(2, 1, 'E'), rover.next_position);
+        assert_eq!(Position(2, 1, Orientation::East), rover.next_position);
     }
 }

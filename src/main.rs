@@ -2,9 +2,9 @@ mod rover;
 mod simulation;
 mod read_input;
 
+use crate::read_input::read_input;
 use crate::simulation::Simulation;
 use crate::rover::Position;
-use crate::read_input::read_input;
 
 fn main() {
     let (grid, rovers, instructions) = read_input();
@@ -17,9 +17,9 @@ fn main() {
         let Position(x, y, orientation) = rover.position;
 
         if rover.lost {
-            println!("{} {} {} LOST", x, y, orientation);
+            println!("{} {} {:?} LOST", x, y, orientation);
         } else {
-            println!("{} {} {}", x, y, orientation);
+            println!("{} {} {:?}", x, y, orientation);
         }
     }
 }
