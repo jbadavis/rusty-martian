@@ -60,7 +60,8 @@ impl Simulation {
     }
 }
 
-#[cfg(test)] mod tests {
+#[cfg(test)]
+mod tests {
     use super::*;
     use crate::rover::Orientation;
 
@@ -72,11 +73,43 @@ impl Simulation {
         let rover_two = Rover::new(Position(3, 2, Orientation::North));
         let rover_three = Rover::new(Position(0, 3, Orientation::West));
 
-        let instructions_one = vec![Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward, Instruction::Right, Instruction::Forward];
-        let instructions_two = vec![
-            Instruction::Forward, Instruction::Right, Instruction::Right, Instruction::Forward, Instruction::Left, Instruction::Left, Instruction::Forward, Instruction::Forward, Instruction::Right, Instruction::Right, Instruction::Forward, Instruction::Left, Instruction::Left,
+        let instructions_one = vec![
+            Instruction::Right,
+            Instruction::Forward,
+            Instruction::Right,
+            Instruction::Forward,
+            Instruction::Right,
+            Instruction::Forward,
+            Instruction::Right,
+            Instruction::Forward,
         ];
-        let instructions_three = vec![Instruction::Left, Instruction::Left, Instruction::Forward, Instruction::Forward, Instruction::Forward, Instruction::Left, Instruction::Forward, Instruction::Left, Instruction::Forward, Instruction::Left];
+        let instructions_two = vec![
+            Instruction::Forward,
+            Instruction::Right,
+            Instruction::Right,
+            Instruction::Forward,
+            Instruction::Left,
+            Instruction::Left,
+            Instruction::Forward,
+            Instruction::Forward,
+            Instruction::Right,
+            Instruction::Right,
+            Instruction::Forward,
+            Instruction::Left,
+            Instruction::Left,
+        ];
+        let instructions_three = vec![
+            Instruction::Left,
+            Instruction::Left,
+            Instruction::Forward,
+            Instruction::Forward,
+            Instruction::Forward,
+            Instruction::Left,
+            Instruction::Forward,
+            Instruction::Left,
+            Instruction::Forward,
+            Instruction::Left,
+        ];
 
         let rovers = vec![rover_one, rover_two, rover_three];
         let instructions = vec![instructions_one, instructions_two, instructions_three];

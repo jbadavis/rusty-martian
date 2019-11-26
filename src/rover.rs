@@ -165,7 +165,6 @@ mod tests {
         assert_eq!(rover.lost, true);
     }
 
-
     #[test]
     fn position_accepted() {
         let mut rover = Rover::new(Position(2, 2, Orientation::North));

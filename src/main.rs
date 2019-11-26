@@ -1,14 +1,14 @@
+mod read_input;
 mod rover;
 mod simulation;
-mod read_input;
 
 use crate::read_input::read_input;
-use crate::simulation::Simulation;
 use crate::rover::Position;
+use crate::simulation::Simulation;
 
 fn main() {
     let (grid, rovers, instructions) = read_input();
-    
+
     let mut simulation = Simulation::new(grid, rovers, instructions);
 
     simulation.run();
