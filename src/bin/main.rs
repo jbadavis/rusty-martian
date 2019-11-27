@@ -1,10 +1,6 @@
-mod read_input;
-mod rover;
-mod simulation;
-
-use crate::read_input::read_input;
-use crate::rover::Position;
-use crate::simulation::Simulation;
+use rusty_martian::read_input::read_input;
+use rusty_martian::rover::Position;
+use rusty_martian::simulation::Simulation;
 
 fn main() {
     let (grid, rovers, instructions) = read_input();
