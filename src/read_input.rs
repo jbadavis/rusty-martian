@@ -60,14 +60,14 @@ fn parse_instruction(instruction: char) -> Result<Instruction, String> {
 fn get_grid(line: &str) -> Grid {
     let grid: Vec<i32> = line
         .chars()
-        .filter(|c| c.clone() != ' ')
-        .map(|c| char_to_int(c))
+        .filter(|c| *c != ' ')
+        .map(char_to_int)
         .collect();
 
     Grid(grid[0], grid[1])
 }
 
-fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
+fn get_rovers(data: &[&str]) -> Vec<Rover> {
     let mut rovers: Vec<Rover> = vec![];
 
     for line in (1..data.len()).step_by(2) {
@@ -84,7 +84,7 @@ fn get_rovers(data: &Vec<&str>) -> Vec<Rover> {
     rovers
 }
 
-fn get_instructions(data: &Vec<&str>) -> Vec<Vec<Instruction>> {
+fn get_instructions(data: &[&str]) -> Vec<Vec<Instruction>> {
     let mut instructions: Vec<Vec<Instruction>> = vec![];
 
     for line in (2..data.len()).step_by(2) {

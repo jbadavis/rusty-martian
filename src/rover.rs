@@ -52,14 +52,12 @@ impl Rover {
     pub fn move_forward(&mut self) -> Position {
         let Position(x, y, orientation) = self.position;
 
-        let position = match self.position.2 {
+        match self.position.2 {
             Orientation::North => Position(x, y + 1, orientation),
             Orientation::East => Position(x + 1, y, orientation),
             Orientation::South => Position(x, y - 1, orientation),
             Orientation::West => Position(x - 1, y, orientation),
-        };
-
-        position
+        }
     }
 
     pub fn is_lost(&mut self) {
